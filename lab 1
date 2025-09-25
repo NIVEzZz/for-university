@@ -1,0 +1,26 @@
+#include <iostream>
+#include <limits>
+
+using namespace std;
+
+int main()
+{
+	setlocale(LC_ALL, "Russian");
+	double a;
+	double b; 
+	long double c;
+
+	/*
+веществнный тип данных, т.к. числа берутся на действительной оси
+double, а не float, чтобы не было переполнения (15-16 знаков после запятой)
+	*/
+
+	cout << "Минимальное значение double: " << -numeric_limits<double>::max() << endl;
+	cout << "Максимальное значение double: " << numeric_limits<double>::max() << endl;
+
+	cin >> a >> b; //Ввод краев интервала
+
+	c = (a + b) / 2; //Нахождение середины интервала
+	
+	cout << c << " double" << endl;
+}
