@@ -1,0 +1,37 @@
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    setlocale(LC_ALL, "Russian");
+
+    /*
+    Нет смысла использовать unsigned int, т.к. unsigned short хвататет для данной задачи (В России на данный момент 799 - это наибольший номер региона),
+    также есть большой запас в символах, т.к. максимальное число, которое можно записать в unsigned short - это 65535
+    */
+
+    unsigned short n;
+
+    cin >> n;
+
+    switch (n) {
+    case 102:
+        cout << "Республика Башкортостан";
+        break;
+    case 11:
+        cout << "Республика Коми";
+        break;
+    case 13:
+        cout << "Республика Мордовия";
+        break;
+    case 15:
+        cout << "Республика Северная Осетия — Алания";
+        break;
+    case 116:
+    case 716:
+        cout << "Республика Татарстан (Татарстан)";
+        break;
+    default:
+        cout << "информация временно недоступна";
+    }
+}
