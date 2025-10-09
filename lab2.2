@@ -1,37 +1,93 @@
 #include <iostream>
+#include <bitset>
 using namespace std;
 
-int main()
-{
+int main() {
+
     setlocale(LC_ALL, "Russian");
 
-    /*
-    Нет смысла использовать unsigned int, т.к. unsigned short хвататет для данной задачи (В России на данный момент 799 - это наибольший номер региона),
-    также есть большой запас в символах, т.к. максимальное число, которое можно записать в unsigned short - это 65535
-    */
+    bool c;
 
-    unsigned short n;
+    cout << "Выберите подпункт (0,1)" << endl;
+    cin >> c;
 
-    cin >> n;
+   if (c == 0) {
+        short A;
+        short i;
+        bool bit_i;
 
-    switch (n) {
-    case 102:
-        cout << "Республика Башкортостан";
-        break;
-    case 11:
-        cout << "Республика Коми";
-        break;
-    case 13:
-        cout << "Республика Мордовия";
-        break;
-    case 15:
-        cout << "Республика Северная Осетия — Алания";
-        break;
-    case 116:
-    case 716:
-        cout << "Республика Татарстан (Татарстан)";
-        break;
-    default:
-        cout << "информация временно недоступна";
+        cout << "Введите A" << endl;
+        cin >> A;
+
+        cout << "Введите i" << endl;
+        cin >> i;
+
+        bitset <8> b1 = A;
+
+        if ((0 <= i) and (i <= 7)) {
+            bit_i = (A >> i) & 1; //Проверяет, присвоено ли биту в указанной позиции в bitset значение 1.
+            if (bit_i == 0) {
+                short bit_0 = A & 1;
+                if (bit_i == bit_0) {
+                    cout << A << endl;
+                }
+                else {
+
+                }
+            }
+            else {
+                int x;
+                int y;
+                int z;
+
+                cout<< "Введите 3 числа:"<< endl;
+
+                cin >> x >> y >> z;
+
+                x = abs(x);
+                y = abs(y);
+                z = abs(z);
+
+                if ( (x == y) || (x == z) || (y == z) ) {
+                    cout << "Код 0. Вычисление невозможно" << endl;
+                }
+                else {
+                    cout << (x + y + z) - max(x, max(y,z)) - min(x, min(y, z)) << endl;
+                }
+            }
+        }
+        else {
+            cout << "Неверный номер бита" << endl;
+        }
     }
+    else {
+        short n;
+
+        cout << "Введите номер региона" << endl;
+        cin >> n;
+        if (n >= 0) {
+            switch (n) {
+            case 102:
+                cout << "Республика Башкортостан";
+                break;
+            case 11:
+                cout << "Республика Коми";
+                break;
+            case 13:
+                cout << "Республика Мордовия";
+                break;
+            case 15:
+                cout << "Республика Северная Осетия — Алания";
+                break;
+            case 116:
+            case 716:
+                cout << "Республика Татарстан (Татарстан)";
+                break;
+            default:
+                cout << "информация временно недоступна";
+            }
+        }
+    }
+
+    return 0;
 }
