@@ -11,10 +11,10 @@ int main() {
     cout << "Выберите подпункт (0,1)" << endl;
     cin >> c;
 
-   if (c == 0) {
+    if (c == 0) {
         short A;
         short i;
-        bool bit_i;
+        short bit_i;
 
         cout << "Введите A" << endl;
         cin >> A;
@@ -29,10 +29,13 @@ int main() {
             if (bit_i == 0) {
                 short bit_0 = A & 1;
                 if (bit_i == bit_0) {
-                    cout << A << endl;
+                    cout << "A = " << b1 << endl;
                 }
                 else {
-
+                    short xB = (1 << bit_i) | 1;
+                    short ans = A ^ xB;
+                    bitset<8> b2 = ans;
+                    cout << "A = " << b2 << endl;
                 }
             }
             else {
@@ -40,7 +43,7 @@ int main() {
                 int y;
                 int z;
 
-                cout<< "Введите 3 числа:"<< endl;
+                cout << "Введите 3 числа:" << endl;
 
                 cin >> x >> y >> z;
 
@@ -48,11 +51,11 @@ int main() {
                 y = abs(y);
                 z = abs(z);
 
-                if ( (x == y) || (x == z) || (y == z) ) {
+                if ((x == y) || (x == z) || (y == z)) {
                     cout << "Код 0. Вычисление невозможно" << endl;
                 }
                 else {
-                    cout << (x + y + z) - max(x, max(y,z)) - min(x, min(y, z)) << endl;
+                    cout << (x + y + z) - max(x, max(y, z)) - min(x, min(y, z)) << endl;
                 }
             }
         }
