@@ -57,6 +57,7 @@ int main() {
                 if (d == 3) {
                     flag_2 = true;
                     pose_3 = pose;
+                    break;
                 }
                 ++pose;
                 x /= 10;
