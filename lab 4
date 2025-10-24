@@ -55,7 +55,7 @@ int main() {
         int matrix[NMax][MMax] = {
         {1,2,2,1},
         {4,1,1,1},
-        {1,1,1,1}
+        {1,1,0,1}
         };
 
         cout << "Введитие матрицу размера 3x4" << endl;
@@ -77,14 +77,12 @@ int main() {
         cout << endl;
 
         short max_str = 0;
-        bool flag_2 = false;
-        short ans;
+        short ans = -1;
 
         for (short i = 0; i < NMax; ++i) {
             short counter = 0;
             for (short j = 0; j < MMax; ++j) {
                 if (matrix[i][j] == 0) {
-                    flag_2 = true;
                     ++counter;
                 }
              short tmp = max_str;
@@ -94,7 +92,7 @@ int main() {
             }
             }
         }
-        if (flag_2 == true) {
+        if (ans >= 0 and ans < NMax) {
             for (short j = 0; j < MMax; ++j) {
                 if (matrix[ans][j] == 0) {
                     matrix[ans][j] = 888;
