@@ -13,7 +13,14 @@ void output(const short N, const short M, short* matrix) {
     }
 }
 
-short* input_err(short* x) {
+void output(const short N, short* matrix) {
+    cout << endl;
+    for (short i = 0; i < N; ++i) {
+        cout << *(matrix + i) << " ";
+    }
+}
+
+short* input_error(short* x) {
     cin >> *x;
     while (*x < 0) {
         cout << "ошибка" << endl;
@@ -22,7 +29,7 @@ short* input_err(short* x) {
     return x;
 }
 
-short* foo(short* matrix, const short N, const short M, const short C, const short D) {
+short* matrix_converter(short* matrix, const short N, const short M, const short C, const short D) {
     for (short i = 0; i < N; ++i) {
         for (short j = 0; j < M; ++j) {
             short* element = (matrix + i * M + j);
@@ -43,6 +50,50 @@ short* foo(short* matrix, const short N, const short M, const short C, const sho
     return matrix;
 }
 
+short* array_fill_by_trash(short* arr_of_index, const short I) {
+    for (short i = 0; i < I; ++i) {
+        *(arr_of_index + i) = -1;
+    }
+    return arr_of_index;
+}
+
+bool founder_number_in_array(short* arr_of_index, const short I, const short A) {
+    for (short i = 0; i < I; ++i) {
+        short* element = (arr_of_index + i);
+        if (*element == A) {
+            return true;
+        }
+    }
+    return false;
+
+}
+
+short* pusher_number_in_array(short* arr_of_index, const short I, const short A) {
+    if (founder_number_in_array(arr_of_index, I, A)) {
+        return arr_of_index;
+    }
+    for (short i = 0; i < I; ++i) {
+        short* element = (arr_of_index + i);
+        if (*element == -1) {
+            *element = A;
+            return arr_of_index;
+        }
+    }
+    return arr_of_index;
+}
+
+short* array_of_index_0_column(short* matrix, short* arr_of_index, const short N, const short M) {
+    for (short i = 0; i < N; ++i) {
+        for (short j = 0; j < M; ++j) {
+            short* element = (matrix + i * M + j);
+            if (*element == 0) {
+                pusher_number_in_array(arr_of_index, M, j);
+            }
+        }
+    }
+    return arr_of_index;
+}
+
 int main() {
 
     setlocale(LC_ALL, "Russian");
@@ -51,11 +102,11 @@ int main() {
     short* matrix = (short*)calloc(N * M, sizeof(short));
 
     short* a = matrix;
-    input_err(a);
+    input_error(a);
     const short A = *a + N;
 
     short* b = matrix+1;
-    input_err(b);
+    input_error(b);
     const short B = *b + M;
 
     short* c = matrix + 2;
@@ -75,10 +126,15 @@ int main() {
     output(N, M, matrix);
 
     matrix = (short*)realloc(matrix, A * B * sizeof(short));
-    foo(matrix,A,B,C,D);
-
+    matrix_converter(matrix,A,B,C,D);
     output(A, B, matrix);
 
+    short* arr_of_index = (short*)calloc(B, sizeof(short));
+    array_fill_by_trash(arr_of_index,B);
+    array_of_index_0_column(matrix,arr_of_index,A,B);
+    output(B, arr_of_index);
+
+    free(arr_of_index);
     free(matrix);
     return 0;
 }
