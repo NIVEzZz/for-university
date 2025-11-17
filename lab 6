@@ -1,0 +1,84 @@
+#include <iostream>
+#include <cstdlib>
+
+using namespace std;
+
+void output(const short N, const short M, short* matrix) {
+    cout << endl;
+    for (short i = 0; i < N; ++i) {
+        for (short j = 0; j < M; ++j) {
+            cout << *(matrix + i * M + j) << " ";
+        }
+        cout << endl;
+    }
+}
+
+short* input_err(short* x) {
+    cin >> *x;
+    while (*x < 0) {
+        cout << "ошибка" << endl;
+        cin >> *x;
+    }
+    return x;
+}
+
+short* foo(short* matrix, const short N, const short M, const short C, const short D) {
+    for (short i = 0; i < N; ++i) {
+        for (short j = 0; j < M; ++j) {
+            short* element = (matrix + i * M + j);
+            if ((i == 0 and j == 0) or (i == 0 and j == 1)) {
+                continue;
+            }
+            if (i == 1 and j == 0) {
+                *element = C;
+                continue;
+            }
+            if (i == 1 and j == 1) {
+                *element = D;
+                continue;
+            }
+            *element = ((i - 1) * C) + ((j - 1) * D);
+        }
+    }
+    return matrix;
+}
+
+int main() {
+
+    setlocale(LC_ALL, "Russian");
+    const short N = 2;
+    const short M = 2;
+    short* matrix = (short*)calloc(N * M, sizeof(short));
+
+    short* a = matrix;
+    input_err(a);
+    const short A = *a + N;
+
+    short* b = matrix+1;
+    input_err(b);
+    const short B = *b + M;
+
+    short* c = matrix + 2;
+    cin >> *c;
+    const short C = *c;
+
+    short* d = matrix + 3;
+    cin >> *d;
+    const short D = *d;
+
+    /*for (short i = 1; i < N; ++i) {
+        for (short j = 0; j < M; ++j) {
+            cin >> *(matrix+ i * M + j);
+        }
+    }*/
+
+    output(N, M, matrix);
+
+    matrix = (short*)realloc(matrix, A * B * sizeof(short));
+    foo(matrix,A,B,C,D);
+
+    output(A, B, matrix);
+
+    free(matrix);
+    return 0;
+}
