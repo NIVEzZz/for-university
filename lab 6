@@ -107,20 +107,21 @@ short counter_0_column(short* arr_of_index, const short I) {
 
 short* deleter_0_column_from_matrix(short* matrix, const short N, const short M, short* new_matrix, const short new_B, short* arr_of_index, const short count_of_0_column) {
     for (short i = 0; i < N; ++i) {
-        short tmp = 0;
-        for (short p = 0; p < new_B; ++p) {
-            short* new_element = (new_matrix + i * new_B + p);
-            for (short j = tmp; j < M; ++j) {
-                short* element = (matrix + i * M + j);
-                for (short k = 0; k < count_of_0_column; ++k) {
-                    short* column_whith_0 = (arr_of_index + k);
-                    if (j == *column_whith_0) {
-                        *new_element = 0;
-                    }
+        short new_col_index = 0;
+
+        for (short j = 0; j < M; ++j) {
+            bool is_zero_column = false;
+
+            for (short k = 0; k < count_of_0_column; ++k) {
+                if (j == arr_of_index[k]) {
+                    is_zero_column = true;
+                    break;
                 }
-                *new_element = *element;
-                tmp = j+1;
-                break;
+            }
+
+            if (!is_zero_column) {
+                new_matrix[i * new_B + new_col_index] = matrix[i * M + j];
+                new_col_index++;
             }
         }
     }
@@ -168,36 +169,44 @@ int main() {
     short* arr_of_index = (short*)calloc(B, sizeof(short));
     array_fill_by_trash(arr_of_index,B);
     array_of_index_0_column(matrix,arr_of_index,A,B);
-    output(B, arr_of_index);
 
     short count_of_0_column = counter_0_column(arr_of_index, B);
-
-    //Для себяБ сколько столбов с 0
-    cout << endl;
-    cout << endl;
-    cout << count_of_0_column << endl;
 
     if (count_of_0_column == 0) {
         free(arr_of_index);
         free(matrix);
         return 0;
     }
-    output(count_of_0_column, arr_of_index);
 
     //Удаление 0 столбцов из матрицы
     short new_B = (B - count_of_0_column);
     short* new_matrix = (short*)calloc(A * new_B, sizeof(short));
+    output(A,new_B,new_matrix);
     deleter_0_column_from_matrix(matrix,A,B,new_matrix, new_B, arr_of_index, count_of_0_column);
-
-    //Для себя, сколько столбов останется
-    cout << endl;
-    cout << endl;
-    cout << new_B << endl;
 
     output(A,new_B, new_matrix);
 
     free(new_matrix);
     free(arr_of_index);
     free(matrix);
+
+    //Задание 2
+    
+    float* a2 = new float;
+    float* b2 = new float;
+
+    cin >> *a2;
+    cin >> *b2;
+    *a2 *= 3;
+
+    float temp = *a2;
+    *a2 = *b2;
+    *b2 = temp;
+
+    cout << *a2 << " " << *b2;
+
+    delete a2;
+    delete b2;
+    
     return 0;
 }
