@@ -11,8 +11,8 @@ namespace mt {
         }
 
         // ctor param
-        Product(const std::string& name, const std::string& description, double price, int expiration_days, const std::string& place) : 
-        name_(name), description_(description), price_(price), place_(place), expiration_days_(expiration_days) {
+        Product(const std::string& name, const std::string& description, double price, int expiration_days, const std::string& place) :
+            name_(name), description_(description), price_(price), place_(place), expiration_days_(expiration_days) {
             if (!is_price_valid_(price_))
                 throw std::invalid_argument("Цена должна быть положительной");
             if (expiration_days_ < 0)
@@ -38,7 +38,7 @@ namespace mt {
             }
             name_ = name;
         }
-        std::string get_name() const {return name_;}
+        std::string get_name() const { return name_; }
 
         // private description_ set, get
         void set_description(const std::string& description) {
@@ -55,7 +55,7 @@ namespace mt {
                 throw std::invalid_argument("Цена должна быть положительной");
             price_ = price;
         }
-        double get_price() const {return price_;}
+        double get_price() const { return price_; }
 
         // protected expiration_days_  set, get
         void set_expiration_days(int days) {
@@ -63,7 +63,7 @@ namespace mt {
                 throw std::invalid_argument("Срок годности должен быть не отрицаиельный");
             expiration_days_ = days;
         }
-        int get_expiration_days() const {return expiration_days_;}
+        int get_expiration_days() const { return expiration_days_; }
 
         // private place_ set, get
         void set_place(const std::string& place) {
@@ -72,7 +72,7 @@ namespace mt {
             }
             place_ = place;
         }
-        std::string get_place() const {return place_;}
+        std::string get_place() const { return place_; }
 
         // вывод всей информации
         void print() const {
@@ -85,6 +85,9 @@ namespace mt {
 
         // вывод информации где получить
         void print_where_to_get(const std::string& info) const {
+            if (info.empty()) {
+                throw std::invalid_argument("Место получения не указанно");
+            }
             std::cout << "Купить можно в: " << place_ << std::endl;
             std::cout << "Информация: " << info << std::endl;
         }
@@ -119,18 +122,22 @@ int main() {
     try {
         std::cout << "Товар по умолчанию" << std::endl;
         mt::Product p1;
-        std::cout << "Место в памяти: " << &p1 << std::endl;
+        std::cout << "ip in ram: " << &p1 << std::endl;
         p1.print();
 
         std::cout << "\nТовар с параметрами" << std::endl;
         mt::Product p2("Торт", "Шоколадный", 600, 30, "Перекресток");
-        std::cout << "Место в памяти: " << &p2 << std::endl;
+        std::cout << "ip in ram: " << &p2 << std::endl;
         p2.print();
 
         std::cout << "\nКопирование товара" << std::endl;
         mt::Product p3 = p2;
-        std::cout << "Место в памяти: " << &p3 << std::endl;
+        std::cout << "ip in ram: " << &p3 << std::endl;
         p3.print();
+
+        std::cout << "\nИзменение описания" << std::endl;
+        p2.set_description("Клубничный");
+        std::cout << "Новое описание: " << p2.get_description() << std::endl;
 
         std::cout << "\nИзменение цены" << std::endl;
         p2.set_price(555.5);
@@ -141,7 +148,7 @@ int main() {
         std::cout << "Осталось дней: " << p2.get_expiration_days() << std::endl;
 
         std::cout << "\nВ каком отделе" << std::endl;
-        p2.print_where_to_get("Отдел молочной продукции");
+        p2.print_where_to_get("Отдел сладкой продукции");
     }
     catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
