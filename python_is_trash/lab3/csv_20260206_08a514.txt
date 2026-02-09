@@ -1,0 +1,6 @@
+Name,Age,Salary,FullTime,Department
+Ivan Petrov,-28,-75000.50,True,IT
+Mariya Sidorova,35,82000.75,True,HR
+Aleksej Ivanov,22,45000.00,False,Sales
+Olga Smirnova,41,95000.25,True,Management
+Dmitrij Kuznecov,19,35000.50,False,IT

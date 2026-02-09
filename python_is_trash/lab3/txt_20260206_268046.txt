@@ -1,0 +1,5 @@
+Yabloki;100;85.50;Frukty;2024-01-20
+Banany;150;65.30;Frukty;2024-01-18
+Moloko;50;89.90;Molochnye;2024-01-19
+Hleb;200;45.00;Vypechka;2024-01-20
+Syr;75;350.00;Molochnye;2024-01-17

@@ -1,0 +1,6 @@
+ID	Name	Category	Price	InStock	Rating	Weight
+001	Noutbuk	Elektronika	899.99	True	4.5	2.3
+002	Stul	Mebel		150.00	True	4.2	7.8
+003	Kniga	Kancelyariya	25.50	False	4.8	0.5
+004	Telefon	Elektronika	599.99	True	4.1	0.3
+005	Stol	Mebel		32.23	False	4.7	15.2

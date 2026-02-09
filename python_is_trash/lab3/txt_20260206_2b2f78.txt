@@ -1,0 +1,6 @@
+Date|Product|Quantity|Price|Discount|"Customer Name"
+2024-01-15|Laptop|5|999.99|0.10|"Ivanov I.I."
+2024-01-16|Mouse|20|25.50|0.05|"Petrova M.S."
+2024-01-17|Keyboard|15|45.00|null|"Sidorov A.V."
+2024-01-18|Monitor|3|299.99|0.15|"Kuznecova E.P."
+2024-01-19|Tablet|8|399.50|0.00|"Smirnov D.K."
