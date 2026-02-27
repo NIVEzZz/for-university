@@ -27,7 +27,7 @@ namespace mt {
 
     // ctor param
     Product::Product(const std::string& name, const std::string& description, double price, int expiration_days, const std::string& place, const vec& composition) :
-        name_(name), description_(description), price_(price), place_(place), expiration_days_(expiration_days), composition_(composition){
+        name_(name), description_(description), price_(price), place_(place), expiration_days_(expiration_days), composition_(composition) {
         if (!is_price_valid_(price_))
             throw std::invalid_argument("Цена должна быть положительной");
         if (expiration_days_ < 0)
@@ -37,7 +37,7 @@ namespace mt {
     }
 
     // ctor copy
-    Product::Product(const Product& other) : name_(other.name_), description_(other.description_), price_(other.price_), place_(other.place_), expiration_days_(other.expiration_days_), composition_(other.composition_){
+    Product::Product(const Product& other) : name_(other.name_), description_(other.description_), price_(other.price_), place_(other.place_), expiration_days_(other.expiration_days_), composition_(other.composition_) {
         std::cerr << "ctor copy" << std::endl;
     }
 
@@ -59,7 +59,7 @@ namespace mt {
             std::swap(tmp.price_, price_);
             std::swap(tmp.place_, place_);
             std::swap(tmp.composition_, composition_);
-            
+
             std::cerr << "copy assigment operator" << std::endl;
         }
         return *this;
@@ -78,24 +78,31 @@ namespace mt {
                 result.composition_.push_back(other.composition_[i]);
             }
         }
+        vec v = result.composition_;
+        std::sort(v.begin(), v.end());
+        auto last = std::unique(v.begin(), v.end());
+        v.erase(last, v.end());
+        result.set_composition(v);
+        v.clear();
+
         return result;
     }
     Product  Product::operator-(Product& other) {
         Product result;
         result.set_name("выбор" + name_ + "без" + other.name_);
-        result.set_price(price_* 0.9);
-        result.set_expiration_days(expiration_days_-2);
+        result.set_price(price_ * 0.9);
+        result.set_expiration_days(expiration_days_ - 2);
         result.composition_.clear();
         result.composition_.reserve(composition_.size() + 1);
         for (int i = 0; i < composition_.size(); ++i) {
-            if (std::count(other.composition_.begin(),other.composition_.end(),composition_[i]) == 0) {
+            if (std::count(other.composition_.begin(), other.composition_.end(), composition_[i]) == 0) {
                 result.composition_.push_back(composition_[i]);
             }
         }
         result.composition_.push_back("консервант Т1000");
         return result;
     }
-    Product&  Product::operator-=(Product& other) {
+    Product& Product::operator-=(Product& other) {
         Product tmp;
         this->set_name("выбор" + name_ + "без" + other.name_);
         this->set_price(price_ * 0.9);
