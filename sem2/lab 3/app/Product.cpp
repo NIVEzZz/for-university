@@ -1,203 +1,217 @@
 #include "Product.hpp"
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 
-/*void print_vector(const vec& vect) {
+
+void print_vector(const vec& vect) {
     std::cout << "[";
-    for (int i = 0; i < vect.size(); ++i) {
-        bool flag = true;
-        vect[i].print();
-        if (i == vect.size() - 1) {
-            flag = false;
+    for (size_t i = 0; i < vect.size(); ++i) {
+        std::cout << vect[i];
+        if (i + 1 < vect.size()) std::cout << " ";
+    }
+    std::cout << "]" << std::endl;
+}
+
+
+// Объединяет два списка ингредиентов, суммируя объёмы для одинаковых названий.
+std::vector<Ingredient> merge_compositions(const std::vector<Ingredient>& a, const std::vector<Ingredient>& b) {
+
+    std::vector<Ingredient> result;
+
+    // Добавляет ингредиент в результат, суммируя объём, если такой уже есть
+    auto add_ingredient = [&result](const Ingredient& ing) {
+        auto it = std::find_if(result.begin(), result.end(), [&](const Ingredient& x) { return x.name == ing.name; });
+        if (it != result.end()) {
+            it->volume += ing.volume;
         }
-        if (flag) {
-            std::cout << " ";
+        else {
+            result.push_back(ing);
         }
+        };
+
+    // Добавляем все ингредиенты из a
+    for (const auto& ing : a) {
+        add_ingredient(ing);
+    }
+    // Добавляем все ингредиенты из b
+    for (const auto& ing : b) {
+        add_ingredient(ing);
     }
 
-    std::cout << "]";
-    std::cout << std::endl;
-}*/
+    std::sort(result.begin(), result.end(), [](const Ingredient& x, const Ingredient& y) {return x.name < y.name;});
+
+    return result;
+}
+
+// Возвращает новый вектор из ингредиентов from, названия которых отсутствуют в what.
+std::vector<Ingredient> subtract_compositions(const std::vector<Ingredient>& from, const std::vector<Ingredient>& what) {
+    std::vector<Ingredient> result;
+    for (const auto& ing : from) {
+        if (std::find_if(what.begin(), what.end(),[&](const Ingredient& i) { return i.name == ing.name; }) == what.end()) {
+            result.push_back(ing);
+        }
+    }
+    return result;
+}
 
 namespace mt {
-    // ctor default
-    Product::Product() : name_("Не задано"), description_("Не задано"), price_(0), place_("Не указано"), expiration_days_(0), composition_{("Не задан" , 0)} {
-        std::cerr << "ctor default" << std::endl;
+
+    //-------------------------------------------------------------
+    // Конструкторы / Деструкторы
+    //-------------------------------------------------------------
+
+    Product::Product() : name_("Не задано"), description_("Не задано"), price_(0.0), expiration_days_(0), place_("Не указано"), composition_() {
     }
 
-    // ctor param
-    Product::Product(const std::string& name, const std::string& description, double price, int expiration_days, const std::string& place, const vec& composition) :
-        name_(name), description_(description), price_(price), place_(place), expiration_days_(expiration_days), composition_(composition) {
+    Product::Product(const std::string& name, const std::string& description, double price, int expiration_days, const std::string& place, const std::vector<Ingredient>& composition)
+        : name_(name), description_(description), price_(price), expiration_days_(expiration_days), place_(place), composition_(composition) {
         if (!is_price_valid_(price_))
-            throw std::invalid_argument("Цена должна быть положительной");
+            throw std::invalid_argument("Цена должна быть неотрицательной");
         if (expiration_days_ < 0)
-            throw std::invalid_argument("Срок должен быть положительный");
-
-        std::cerr << "ctor param" << std::endl;
+            throw std::invalid_argument("Срок годности должен быть неотрицательным");
     }
 
-    // ctor copy
-    Product::Product(const Product& other) : name_(other.name_), description_(other.description_), price_(other.price_), place_(other.place_), expiration_days_(other.expiration_days_), composition_(other.composition_) {
-        std::cerr << "ctor copy" << std::endl;
-    }
+    Product::Product(const Product& other) = default;
 
-    // dtor
     Product::~Product() {
         composition_.clear();
-        std::cerr << "dtor: " << name_ << std::endl;
     }
 
-    //------------------------------------------------------------------------------------------------------------------------------------------------------
-    /*
-    //Переопределенный оператор =
-    Product& Product::operator=(Product& other) {
+    //-------------------------------------------------------------
+    // Операторы
+    //-------------------------------------------------------------
+
+    Product& Product::operator=(const Product& other) {
         if (this != &other) {
             Product tmp(other);
-            std::swap(tmp.expiration_days_, expiration_days_);
             std::swap(tmp.name_, name_);
             std::swap(tmp.description_, description_);
             std::swap(tmp.price_, price_);
+            std::swap(tmp.expiration_days_, expiration_days_);
             std::swap(tmp.place_, place_);
             std::swap(tmp.composition_, composition_);
-
-            std::cerr << "copy assigment operator" << std::endl;
         }
         return *this;
     }
-    */
-    //Переопределенный оператор +
-    Product Product::operator+(Product& other) {
-        Product result;
-        result.set_name("смесь" + name_ + "и" + other.name_);
-        result.set_price((price_ + other.price_) * 0.9);
-        result.set_expiration_days(std::min(expiration_days_, other.expiration_days_));
-        result.set_composition(composition_);
-        result.composition_.reserve(composition_.size() + other.composition_.size());
-        for (int i = 0; i < other.composition_.size(); ++i) {
-            if (std::count(result.composition_.begin(), result.composition_.end(), other.composition_[i]) == 0) {
-                result.composition_.push_back(other.composition_[i]);
-            }
-        }
-        vec v = result.composition_;
-        std::sort(v.begin(), v.end());
-        auto last = std::unique(v.begin(), v.end());
-        v.erase(last, v.end());
-        result.set_composition(v);
-        v.clear();
 
-        return result;
-    }
-    /*
-    Product  Product::operator-(Product& other) {
+    Product Product::operator+(const Product& other) const {
         Product result;
-        result.set_name("выбор" + name_ + "без" + other.name_);
-        result.set_price(price_ * 0.9);
-        result.set_expiration_days(expiration_days_ - 2);
-        result.composition_.clear();
-        result.composition_.reserve(composition_.size() + 1);
-        for (int i = 0; i < composition_.size(); ++i) {
-            if (std::count(other.composition_.begin(), other.composition_.end(), composition_[i]) == 0) {
-                result.composition_.push_back(composition_[i]);
-            }
-        }
-        result.composition_.push_back({ "консервант Т1000", 5.0 });
+        result.name_ = "смесь " + name_ + " и " + other.name_;
+        result.description_ = "Объединение товаров";
+        result.price_ = (price_ + other.price_) * 0.9;
+        result.expiration_days_ = std::min(expiration_days_, other.expiration_days_);
+        result.composition_ = merge_compositions(composition_, other.composition_);
+        result.place_ = "место смешивания";
         return result;
     }
-    Product& Product::operator-=(Product& other) {
-        this->set_name("выбор" + name_ + "без" + other.name_);
-        this->set_price(price_ * 0.9);
-        this->set_expiration_days(expiration_days_ - 2);
-        for (int i = 0; i < composition_.size(); ++i) {
-            if (std::count(other.composition_.begin(), other.composition_.end(), composition_[i]) > 0) {
-                composition_.erase(composition_.begin() + i);
-            }
-        }
-        composition_.push_back({ "консервант Т1000", 5.0 });
+
+    Product Product::operator-(const Product& other) const {
+        Product result;
+        result.name_ = "выбор " + name_ + " без " + other.name_;
+        result.description_ = description_;
+        result.price_ = price_ * 0.9;
+        result.expiration_days_ = expiration_days_ - 2;
+        if (result.expiration_days_ < 0)
+            result.expiration_days_ = 0;
+        result.composition_ = subtract_compositions(composition_, other.composition_);
+        result.composition_.push_back(Ingredient("консервант Т1000", 1.0));
+        result.place_ = place_;
+        return result;
+    }
+
+    Product& Product::operator-=(const Product& other) {
+        *this = *this - other;
         return *this;
     }
-    */
-    //------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    // private  name_ set, get
+    //-------------------------------------------------------------
+    // Сеттеры / Геттеры
+    //-------------------------------------------------------------
+
     void Product::set_name(const std::string& name) {
-        if (name.empty()) {
-            throw std::invalid_argument("Имя не указанно");
-        }
+        if (name.empty())
+            throw std::invalid_argument("Имя не может быть пустым");
         name_ = name;
     }
+
     std::string Product::get_name() const { return name_; }
 
-    // private description_ set, get
     void Product::set_description(const std::string& description) {
-        if (description.empty()) {
-            throw std::invalid_argument("Описание не указанно");
-        }
+        if (description.empty())
+            throw std::invalid_argument("Описание не может быть пустым");
         description_ = description;
     }
+
     std::string Product::get_description() const { return description_; }
 
-    // private prise_ set, get
     void Product::set_price(double price) {
         if (!is_price_valid_(price))
-            throw std::invalid_argument("Цена должна быть положительной");
+            throw std::invalid_argument("Цена должна быть неотрицательной");
         price_ = price;
     }
+
     double Product::get_price() const { return price_; }
 
-    // protected expiration_days_  set, get
     void Product::set_expiration_days(int days) {
         if (days < 0)
-            throw std::invalid_argument("Срок годности должен быть не отрицаиельный");
+            throw std::invalid_argument("Срок годности должен быть неотрицательным");
         expiration_days_ = days;
     }
+
     int Product::get_expiration_days() const { return expiration_days_; }
 
-    // private place_ set, get
     void Product::set_place(const std::string& place) {
-        if (place.empty()) {
-            throw std::invalid_argument("Место получения не указанно");
-        }
+        if (place.empty())
+            throw std::invalid_argument("Место получения не может быть пустым");
         place_ = place;
     }
+
     std::string Product::get_place() const { return place_; }
 
-    // private composition_ set, get
-    void Product::set_composition(const vec& composition) {
-        if (composition.empty()) {
-            throw std::invalid_argument("Элемент состава не указан");
-        }
+    void Product::set_composition(const std::vector<Ingredient>& composition) {
         composition_ = composition;
     }
-    vec Product::get_composition() const { return composition_; }
 
-    //------------------------------------------------------------------------------------------------------------------------------------------------------
+    std::vector<Ingredient> Product::get_composition() const { return composition_; }
 
-    // вывод всей информации
+    //-------------------------------------------------------------
+    // Методы вывода
+    //-------------------------------------------------------------
+
     void Product::print() const {
         std::cout << "Название: " << name_ << std::endl;
         std::cout << "Описание: " << description_ << std::endl;
-        std::cout << "Цена: " << price_ << "р" << std::endl;
+        std::cout << "Цена: " << price_ << " р" << std::endl;
         std::cout << "Срок годности: " << expiration_days_ << " дней" << std::endl;
         std::cout << "Место получения: " << place_ << std::endl;
-        std::cout << "Состав: ";
-        //print_vector(composition_);
+        std::cout << "Состав:" << std::endl;;
+        if (composition_.empty()) {
+            std::cout << "  (пусто)" << std::endl;;
+        }
+        else {
+            for (const auto& ing : composition_) {
+                std::cout << "  - " << ing.name << ", объём " << ing.volume << std::endl;;
+            }
+        }
     }
 
-    // вывод информации где получить
     void Product::print_where_to_get(const std::string& info) const {
         std::cout << "Купить можно в: " << place_ << std::endl;
         std::cout << "Информация: " << info << std::endl;
     }
 
-    // уменьшение срока хранения 
+    //-------------------------------------------------------------
+    // Доп. функции
+    //-------------------------------------------------------------
+
     void Product::reduce_expiration() {
-        if (expiration_days_ == 0)
-            throw std::logic_error("Срок годности истёк");
-        expiration_days_ -= 1;
+        if (expiration_days_ <= 0)
+            throw std::logic_error("Срок годности уже истёк");
+        --expiration_days_;
     }
 
     bool Product::is_price_valid_(double price) const {
-        return price >= 0;
+        return price >= 0.0;
     }
 
-} //namespace mt
+} // namespace mt
