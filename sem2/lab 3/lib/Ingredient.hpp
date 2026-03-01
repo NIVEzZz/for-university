@@ -1,12 +1,18 @@
 #pragma once
 #include <string>
 
-namespace lib {
-	struct Ingredient
-	{
-		std::string name_;
-		float volume_;
-		void print() const;
-		bool operator==(Ingredient& other);
-	};
-}//namespase lib
+struct Ingredient {
+    std::string name;
+    double volume;
+
+    Ingredient(const std::string& n = "", double v = 0.0)
+        : name(n), volume(v) {
+    }
+
+    bool operator==(const Ingredient& other) const {
+        return name == other.name;
+    }
+    bool operator<(const Ingredient& other) const {
+        return name < other.name;
+    }
+};
