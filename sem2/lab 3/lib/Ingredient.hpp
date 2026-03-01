@@ -5,7 +5,8 @@ namespace lib {
 	struct Ingredient
 	{
 		std::string name_;
-		double volume_;
+		float volume_;
 		void print() const;
+		bool operator==(Ingredient& other);
 	};
 }//namespase lib
