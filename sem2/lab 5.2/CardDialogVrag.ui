@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CardDialogVrag</class>
+ <widget class="QDialog" name="CardDialogVrag">
+  <property name="geometry"><rect><x>0</x><y>0</y><width>350</width><height>400</height></rect></property>
+  <property name="windowTitle"><string>Карточка врага</string></property>
+  <widget class="QLabel" name="nameValueLabel">
+   <property name="geometry"><rect><x>25</x><y>10</y><width>300</width><height>25</height></rect></property>
+   <property name="font"><font><weight>75</weight><bold>true</bold></font></property>
+   <property name="alignment"><set>Qt::AlignCenter</set></property>
+  </widget>
+  <widget class="QLabel" name="healthValueLabel">
+   <property name="geometry"><rect><x>25</x><y>40</y><width>300</width><height>25</height></rect></property>
+   <property name="alignment"><set>Qt::AlignCenter</set></property>
+  </widget>
+  <widget class="QLabel" name="armorValueLabel">
+   <property name="geometry"><rect><x>25</x><y>70</y><width>300</width><height>25</height></rect></property>
+   <property name="alignment"><set>Qt::AlignCenter</set></property>
+  </widget>
+  <widget class="QLabel" name="imageLabel">
+   <property name="geometry"><rect><x>100</x><y>110</y><width>150</width><height>150</height></rect></property>
+   <property name="scaledContents"><bool>true</bool></property>
+   <property name="alignment"><set>Qt::AlignCenter</set></property>
+  </widget>
+  <widget class="QPushButton" name="printButton">
+   <property name="geometry"><rect><x>90</x><y>290</y><width>80</width><height>30</height></rect></property>
+   <property name="styleSheet"><string notr="true">background-color: #3498db; color: white; border: none; border-radius: 4px;</string></property>
+   <property name="text"><string>Печать</string></property>
+  </widget>
+  <widget class="QPushButton" name="cancelButton">
+   <property name="geometry"><rect><x>180</x><y>290</y><width>80</width><height>30</height></rect></property>
+   <property name="styleSheet"><string notr="true">background-color: #e74c3c; color: white; border: none; border-radius: 4px;</string></property>
+   <property name="text"><string>Отмена</string></property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections><connection><sender>cancelButton</sender><signal>clicked()</signal><receiver>CardDialogVrag</receiver><slot>reject()</slot></connection></connections>
+</ui>
