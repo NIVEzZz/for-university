@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/default.png</file>
+        <file>images/fire.png</file>
+        <file>images/water.png</file>
+        <file>images/earth.png</file>
+        <file>images/rare.png</file>
+        <file>images/common.png</file>
+        <file>images/legendary.png</file>
+        <file>data.txt</file>
+    </qresource>
+</RCC>
