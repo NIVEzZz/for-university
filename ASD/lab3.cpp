@@ -4,15 +4,15 @@
 #include <cmath>
 
 short log3(int x) {
-    return std::log(x) / std::log(3);
+    return static_cast<short>(std::log(static_cast<double>(x)) / std::log(3.0));
 }
 
 short log5(int x) {
-    return std::log(x) / std::log(5);
+    return static_cast<short>(std::log(static_cast<double>(x)) / std::log(5.0));
 }
 
 short log7(int x) {
-    return std::log(x) / std::log(7);
+    return static_cast<short>(std::log(static_cast<double>(x)) / std::log(7.0));
 }
 
 int main() {
