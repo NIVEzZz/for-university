@@ -6,7 +6,7 @@ void insertion_sort(std::vector<int>& data) {
         int x = data[i];
         short j = i-1;
 
-        //перемещение элементов (паравозиком)
+        //перемещение элементов (паровозиком)
         while (j >= 0 && data[j] > x) {
             data[j+1] = data[j];
             j--;
