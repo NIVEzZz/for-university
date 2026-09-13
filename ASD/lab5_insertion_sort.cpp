@@ -2,9 +2,9 @@
 #include <vector>
 
 void insertion_sort(std::vector<int>& data) {
-    for (int i = 1; i < data.size(); ++i) {
+    for (short i = 1; i < data.size(); ++i) {
         int x = data[i];
-        int j = i-1;
+        short j = i-1;
 
         //перемещение элементов (паравозиком)
         while (j >= 0 && data[j] > x) {
