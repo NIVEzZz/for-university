@@ -2,13 +2,13 @@
 #include <vector>
 
 void comb_sort(std::vector<int>& data) {
-    int step = data.size();
+    short step = data.size();
     bool swap_flag = false;
     const float reduction_factor = 1.25;
 
     while (step > 1 || swap_flag) {
         if (step > 1) {
-            step = static_cast<int>(step / reduction_factor);
+            step = static_cast<short>(step / reduction_factor);
         }
 
         swap_flag = false;
