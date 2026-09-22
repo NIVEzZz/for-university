@@ -1,0 +1,307 @@
+import math
+import sys
+
+
+#0
+TWO_PI = 2 * math.pi
+EPS = sys.float_info.epsilon
+
+def _norm_rad(x: float) -> float:
+    x = float(x) % TWO_PI
+    if abs(x - TWO_PI) < EPS:
+        return 0.0
+    else:
+        return x
+
+def _as_rad(x) -> float:
+    if isinstance(x, Angle):
+        return x.get_radians()
+    if isinstance(x, (int, float)):
+        return float(x)
+    raise TypeError(f"TypeError x={type(x)}")
+
+
+class Angle:
+    #1
+    def __init__(self, radians: float):
+        self._rad = float(radians)
+
+    #2
+    @classmethod
+    #Можно воткнуть вместо "Angle" Self, но у меня питон 3.10
+    def from_radians(cls, radians: float) -> "Angle":
+        return cls(radians)
+
+    @classmethod
+    def from_degrees(cls, degrees: float) -> "Angle":
+        return cls(math.radians(degrees))
+
+    #3
+    def __str__(self) -> str:
+        return f"Angle({self._rad:.3f} rad, {self.get_degrees():.3g} deg)"
+
+    def __repr__(self) -> str:
+        return f"Angle(_rad={self._rad:.3f})"
+
+    #4
+    def get_radians(self) -> float:
+        return self._rad
+
+    def set_radians(self, radians: float) -> None:
+        self._rad = float(radians)
+
+    def get_degrees(self) -> float:
+        return math.degrees(self._rad)
+
+    def set_degrees(self, degrees: float) -> None:
+        self._rad = math.radians(degrees)
+
+    #5
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, (Angle, int, float)):
+            return NotImplemented
+        a = _norm_rad(self.get_radians())
+        b = _norm_rad(_as_rad(other))
+        return abs(a - b) < EPS
+
+    def __ne__(self, other) -> bool:
+        result = self.__eq__(other)
+        if result == NotImplemented:
+            return NotImplemented
+        return not result
+
+    def __lt__(self, other) -> bool:
+        if not isinstance(other, (Angle, int, float)):
+            return NotImplemented
+        a = _norm_rad(self.get_radians())
+        b = _norm_rad(_as_rad(other))
+        return a + EPS < b
+
+    def __le__(self, other) -> bool:
+        if not isinstance(other, (Angle, int, float)):
+            return NotImplemented
+        a = _norm_rad(self.get_radians())
+        b = _norm_rad(_as_rad(other))
+        return a + EPS < b or abs(a - b) < EPS
+
+    def __gt__(self, other) -> bool:
+        if not isinstance(other, (Angle, int, float)):
+            return NotImplemented
+        return not self.__le__(other)
+
+    def __ge__(self, other) -> bool:
+        if not isinstance(other, (Angle, int, float)):
+            return NotImplemented
+        return not self.__lt__(other)
+
+    #6
+    def __float__(self) -> float:
+        return float(self._rad)
+
+    def __int__(self) -> int:
+        return int(self._rad)
+
+    #7
+    def __add__(self, other):
+        if isinstance(other, (Angle, int, float)):
+            return Angle(self.get_radians() + _as_rad(other))
+        return NotImplemented
+
+    def __radd__(self, other):
+        return self.__add__(other)
+
+    def __sub__(self, other):
+        if isinstance(other, (Angle, int, float)):
+            return Angle(self.get_radians() - _as_rad(other))
+        return NotImplemented
+
+    def __rsub__(self, other):
+        if isinstance(other, (Angle, int, float)):
+            return Angle(_as_rad(other) - self.get_radians())
+        return NotImplemented
+
+    def __mul__(self, other):
+        if isinstance(other, (int, float)):
+            return Angle(self.get_radians() * float(other))
+        return NotImplemented
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __truediv__(self, other):
+        if isinstance(other, (int, float)):
+            return Angle(self.get_radians() / float(other))
+        return NotImplemented
+
+
+class AngleRange:
+    #1,2
+    def __init__(self, start, end, inclusive_start=True, inclusive_end=True):
+        self.start = Angle.from_radians(_as_rad(start))
+        self.end = Angle.from_radians(_as_rad(end))
+        self.inclusive_start = bool(inclusive_start)
+        self.inclusive_end = bool(inclusive_end)
+
+    #3
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, AngleRange):
+            return NotImplemented
+        a_start = _norm_rad(self.start.get_radians())
+        a_end = _norm_rad(self.end.get_radians())
+        b_start = _norm_rad(other.start.get_radians())
+        b_end = _norm_rad(other.end.get_radians())
+        return (
+            self.inclusive_start == other.inclusive_start
+            and self.inclusive_end == other.inclusive_end
+            and abs(a_start - b_start) < EPS
+            and abs(a_end - b_end) < EPS
+        )
+
+    #4
+    def __str__(self) -> str:
+        open = "[" if self.inclusive_start else "("
+        close = "]" if self.inclusive_end else ")"
+        return f"{open}{self.start.get_degrees():.3g}°, {self.end.get_degrees():.3g}°{close}"
+
+    def __repr__(self) -> str:
+        return f"AngleRange(start={self.start.get_radians():.3f}, end={self.end.get_radians():.3f}, inclusive_start={self.inclusive_start}, inclusive_end={self.inclusive_end})"
+
+    #???
+    def _segments(self):
+        a = _norm_rad(self.start.get_radians())
+        b = _norm_rad(self.end.get_radians())
+        if abs(a - b) < EPS:
+            return [(0.0, TWO_PI)]
+        if a < b:
+            return [(a, b)]
+        return [(a, TWO_PI), (0.0, b)]
+    #5
+    def __abs__(self) -> float:
+        return (self.end.get_radians()) - (self.start.get_radians())
+
+    #6
+    def __lt__(self, other):
+        if not isinstance(other, AngleRange):
+            return NotImplemented
+        return self != other and self in other
+
+    def __le__(self, other):
+        if not isinstance(other, AngleRange):
+            return NotImplemented
+        return self in other
+
+    def __gt__(self, other):
+        if not isinstance(other, AngleRange):
+            return NotImplemented
+        return other in self and self != other
+
+    def __ge__(self, other):
+        if not isinstance(other, AngleRange):
+            return NotImplemented
+        return other in self
+
+    #7
+    def __contains__(self, item) -> bool:
+        if isinstance(item, (Angle, int, float)):
+            x = _norm_rad(_as_rad(item))
+            for a, b in self._segments():
+                left_ok = x > a + EPS or (self.inclusive_start and abs(x - a) < EPS)
+                right_ok = x < b - EPS or (self.inclusive_end and abs(x - b) < EPS)
+                if left_ok and right_ok:
+                    return True
+            return False
+
+        if isinstance(item, AngleRange):
+            for s, e in item._segments():
+                ok = False
+                for a, b in self._segments():
+                    left_ok = s > a + EPS or (self.inclusive_start and abs(s - a) < EPS)
+                    right_ok = e < b - EPS or (self.inclusive_end and abs(e - b) < EPS)
+                    if left_ok and right_ok:
+                        ok = True
+                        break
+                if not ok:
+                    return False
+            return True
+
+        return False
+
+    @staticmethod
+    def _merge_ranges(ranges):
+        if not ranges:
+            return []
+        ranges = sorted(ranges, key=lambda x: x[0])
+        merged = [list(ranges[0])]
+        for s, e in ranges[1:]:
+            if s <= merged[-1][1] + EPS:
+                merged[-1][1] = max(merged[-1][1], e)
+            else:
+                merged.append([s, e])
+        return [(s, e) for s, e in merged]
+
+    def __add__(self, other):
+        if not isinstance(other, AngleRange):
+            return NotImplemented
+        res = []
+        for a1, b1 in self._segments():
+            for a2, b2 in other._segments():
+                s = _norm_rad(a1 + a2)
+                e = _norm_rad(b1 + b2)
+                if s < e:
+                    res.append((s, e))
+                else:
+                    res.append((s, TWO_PI))
+                    res.append((0.0, e))
+        return [AngleRange(s, e) for s, e in self._merge_ranges(res)]
+
+    def __sub__(self, other):
+        if not isinstance(other, AngleRange):
+            return NotImplemented
+
+        result = self._segments()
+        for os, oe in other._segments():
+            next_result = []
+            for s, e in result:
+                if oe <= s + EPS or os >= e - EPS:
+                    next_result.append((s, e))
+                else:
+                    if s < os - EPS:
+                        next_result.append((s, os))
+                    if oe < e - EPS:
+                        next_result.append((oe, e))
+            result = next_result
+
+        return [AngleRange(s, e) for s, e in result]
+
+
+if __name__ == "__main__":
+    a = Angle.from_degrees(90)
+    b = Angle.from_radians(math.pi / 2)
+    c = Angle.from_radians(5 * math.pi / 2)
+
+    print(a)
+    print(repr(a))
+    print(a == b, a == c)
+    print(float(a), int(a))
+    print((a + math.pi), (a * 2), (a / 2))
+    print("-----")
+    print(a - 4.8)
+    print(4.8 - a)
+
+    r1 = AngleRange(0, math.pi * 3)
+    r2 = AngleRange(Angle.from_degrees(30), Angle.from_degrees(120))
+    r3 = AngleRange(3 * math.pi / 2, math.pi / 4)
+
+    print("="*30)
+    print(f"2pi={TWO_PI}")
+    print(r1)
+    print(repr(r2))
+    print("len:", abs(r1))
+    print("angle in range:", math.pi / 3 in r1)
+    print("range in range:", AngleRange(math.pi / 6, math.pi / 3) in r2)
+
+    print("compare:", r1 < r2, r2 > r1, r1 <= r1)
+
+    print("sum:", r1 + r2)
+    print("diff:", r2 - r1)
+    print("wrap contains:", math.pi / 6 in r3)
