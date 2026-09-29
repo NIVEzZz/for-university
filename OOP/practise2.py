@@ -1,4 +1,7 @@
 import math
+import sys
+
+EPS = sys.float_info.epsilon
 
 class Point3d:
 
@@ -161,10 +164,35 @@ class Vector:
         else:
             return f"Error"
     @staticmethod
-    def is_collinear(a,b):
+    def is_collinear(a,b) ->bool:
         return a.x/b.x == a.y/b.y == a.z/b.z
-    def is_complanar(a,b,c):
-        delta = a.x*b.y*c.z + c.x*b.y*
+    def is_complanar(a, b ,c) -> bool:
+        det = (a.x * b.y * c.z +
+               a.y * b.z * c.x +
+               a.z * b.x * c.y -
+               a.z * b.y * c.x -
+               a.y * b.x * c.z -
+               a.x * b.z * c.y)
+        return abs(det) < EPS
+
+    def __len__(self) -> int:
+        return int((self.x**2 + self.y**2 + self.z**2)**0.5)
+
+    def __getitem__(self, item):
+        if item == 0 or item == 'x':
+            return self.x
+        elif item == 1 or item == 'y':
+            return self.y
+        elif item == 2 or item == 'z':
+            return self.z
+        else:
+            raise ValueError
+
+    def __iter__(self):
+        yield self.x
+        yield self.y
+        yield self.z
+
 
 a = Vector(1,2,3)
 b = Vector(1,2,3)
@@ -202,3 +230,23 @@ a -= b
 print(a)
 print(a@c)
 print(c@a)
+
+v_a = Vector(1,2,3)
+v_b = Vector(4,5,6)
+v_c = Vector(7,8,9)
+v_d = Vector(0,1,0)
+v_e = Vector(2,4,6)
+
+print("Колиниарность1", Vector.is_collinear(v_a,v_e))
+print("Колиниарность2", Vector.is_collinear(v_a,v_c))
+print("Комплонарность1:", Vector.is_complanar(v_a,v_b,v_c))
+print("Комплонарность2:", Vector.is_complanar(v_a,c,v_d))
+print("len(v_d):", len(v_d))
+print("len(v_a):", len(v_a))
+print("v_a[0]: ",v_a[0])
+print("v_a['y']: ",v_a['y'])
+print("v_a[2]: ",v_a[2])
+
+for comp in v_a:
+    print(comp)
+print("v_a[3]: ",v_a[3])
