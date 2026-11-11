@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 // Сортирующее дерево
 void heapify(std::vector<int>& arr, int n, int i) {
